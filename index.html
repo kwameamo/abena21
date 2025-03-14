@@ -1,0 +1,638 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Anna's 21st Birthday</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background-color: #000;
+            color: #fff;
+            text-align: center;
+            overflow-x: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 800px;
+            width: 90%;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        h1 {
+            font-size: 3.5em;
+            font-weight: 700;
+            margin-bottom: 10px;
+            color: #fff;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeUp 1s ease forwards 0.3s;
+        }
+        
+        .highlight {
+            color: #d4af37;
+            position: relative;
+            display: inline-block;
+        }
+        
+        .highlight::after {
+            content: "21";
+            position: absolute;
+            left: 0;
+            top: 0;
+            color: #d4af37;
+            width: 100%;
+            height: 100%;
+            animation: glitter 2s linear infinite;
+        }
+        
+        @keyframes glitter {
+            0%, 100% { text-shadow: 0 0 5px rgba(212, 175, 55, 0.5); }
+            50% { text-shadow: 0 0 20px rgba(212, 175, 55, 0.8), 0 0 30px rgba(212, 175, 55, 0.6); }
+        }
+        
+        .subtitle {
+            font-size: 1.4em;
+            margin-bottom: 40px;
+            font-weight: 300;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeUp 1s ease forwards 0.6s;
+        }
+        
+        @keyframes fadeUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .game-container {
+            position: relative;
+            width: 100%;
+            height: 400px;
+            border: 2px solid #333;
+            border-radius: 10px;
+            margin: 30px 0;
+            background-color: #111;
+            overflow: hidden;
+            box-shadow: 0 0 30px rgba(212, 175, 55, 0.1);
+            opacity: 0;
+            transform: scale(0.95);
+            animation: fadeIn 1s ease forwards 0.9s;
+        }
+        
+        @keyframes fadeIn {
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+        
+        .player {
+            position: absolute;
+            bottom: 20px;
+            left: 50px;
+            width: 50px;
+            height: 50px;
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="45" fill="%23fff"/><circle cx="35" cy="40" r="6" fill="%23000"/><circle cx="65" cy="40" r="6" fill="%23000"/><path d="M35,65 Q50,80 65,65" stroke="%23000" stroke-width="3" fill="none"/></svg>');
+            background-size: contain;
+            background-repeat: no-repeat;
+            transition: left 0.1s ease;
+            animation: float 2s ease-in-out infinite;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-8px); }
+        }
+        
+        .chocolate {
+            position: absolute;
+            width: 30px;
+            height: 20px;
+            background-color: #54290D;
+            border-radius: 3px;
+            animation: spin 1.5s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .chocolate::before {
+            content: "";
+            position: absolute;
+            top: 5px;
+            left: 5px;
+            width: 20px;
+            height: 10px;
+            background-color: #8B4513;
+            border-radius: 2px;
+        }
+        
+        .score {
+            font-size: 1.2em;
+            margin: 20px 0;
+            color: #d4af37;
+            font-weight: 300;
+            letter-spacing: 1px;
+            opacity: 0;
+            animation: fadeIn 1s ease forwards 1.2s;
+        }
+        
+        .score span {
+            font-weight: 700;
+        }
+        
+        .photobook-btn {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 12px 24px;
+            font-size: 1em;
+            background-color: transparent;
+            color: #fff;
+            border: 2px solid #d4af37;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 500;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            opacity: 0;
+            animation: fadeIn 1s ease forwards 1.5s;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .photobook-btn::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(212, 175, 55, 0.2), transparent);
+            transition: all 0.6s ease;
+        }
+        
+        .photobook-btn:hover::before {
+            left: 100%;
+        }
+        
+        .photobook-btn:hover {
+            background-color: #d4af37;
+            color: #000;
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(212, 175, 55, 0.3);
+        }
+        
+        .photobook-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        
+        .photobook-container {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.95);
+            z-index: 100;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+        }
+        
+        .photobook-container.visible {
+            opacity: 1;
+        }
+        
+        .photobook-iframe {
+            width: 90%;
+            height: 90%;
+            margin: 2% auto;
+            display: block;
+            border: none;
+            box-shadow: 0 0 50px rgba(212, 175, 55, 0.2);
+            transform: scale(0.9);
+            transition: transform 0.5s ease;
+            background-color: #000;
+        }
+        
+        .photobook-container.visible .photobook-iframe {
+            transform: scale(1);
+        }
+        
+        .close-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            font-size: 30px;
+            color: white;
+            cursor: pointer;
+            opacity: 0.7;
+            transition: all 0.3s ease;
+            z-index: 101;
+        }
+        
+        .birthday-message {
+            max-width: 600px;
+            margin: 30px auto;
+            padding: 25px;
+            background-color: rgba(20, 20, 20, 0.6);
+            border-left: 3px solid #d4af37;
+            text-align: left;
+            line-height: 1.6;
+            border-radius: 5px;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeUp 1s ease forwards 1s;
+        }
+        
+        .birthday-message p {
+            margin-bottom: 15px;
+            font-weight: 300;
+            font-size: 0.95em;
+        }
+        
+        .birthday-message p:first-child {
+            color: #d4af37;
+            font-weight: 400;
+        }
+        
+        .close-btn:hover {
+            opacity: 1;
+            transform: rotate(90deg);
+        }
+        
+        .game-instructions {
+            font-size: 0.9em;
+            color: #999;
+            margin-bottom: 15px;
+            font-weight: 300;
+            opacity: 0;
+            animation: fadeIn 1s ease forwards 1.8s;
+        }
+        
+        .celebrate {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 50;
+        }
+        
+        .confetti {
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            background-color: #d4af37;
+            opacity: 0;
+        }
+        
+        @keyframes float-confetti {
+            0% {
+                transform: translateY(0) rotate(0deg);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-100vh) rotate(360deg);
+                opacity: 0;
+            }
+        }
+        
+        .age-badge {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            width: 60px;
+            height: 60px;
+            background-color: #d4af37;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            font-weight: 700;
+            color: #000;
+            box-shadow: 0 0 20px rgba(212, 175, 55, 0.5);
+            opacity: 0;
+            transform: scale(0) rotate(180deg);
+            animation: pop-in 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards 2s;
+        }
+        
+        @keyframes pop-in {
+            to {
+                opacity: 1;
+                transform: scale(1) rotate(0deg);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="age-badge">21</div>
+        <h1>Dr. <span class="highlight">21</span></h1>
+        <div class="subtitle">celebrating Anna Abena Yamoah</div>
+        
+        <div class="birthday-message">
+            <p>Dear Anna,</p>
+            <p>Twenty-one years of brilliance, compassion, and determination. Your journey to becoming a doctor isn't just about the knowledge you're gaining, but the lives you're preparing to touch. Like the chocolates in this game, may you collect countless sweet moments of joy and success along your path.</p>
+            <p>Here's to the incredible healer you're becoming and the amazing person you already are.</p>
+            <p>Happy 21st Birthday!</p>
+        </div>
+        
+        <div class="game-instructions">
+            Use arrow keys or touch to collect 21 chocolates
+        </div>
+        
+        <div class="game-container">
+            <div class="player"></div>
+        </div>
+        
+        <div class="score">Chocolates: <span id="score-value">0</span>/21</div>
+        
+        <button class="photobook-btn" id="unlock-btn" disabled>View Memories</button>
+        
+        <div class="photobook-container" id="photobook">
+            <span class="close-btn" id="close-btn">&times;</span>
+            <iframe class="photobook-iframe" src="about:blank" id="flipbook-iframe"></iframe>
+        </div>
+    </div>
+    
+    <div class="celebrate" id="celebrate"></div>
+    
+    <script>
+        // Game variables
+        const player = document.querySelector('.player');
+        const gameContainer = document.querySelector('.game-container');
+        const scoreValue = document.getElementById('score-value');
+        const unlockBtn = document.getElementById('unlock-btn');
+        const photobook = document.getElementById('photobook');
+        const closeBtn = document.getElementById('close-btn');
+        const flipbookIframe = document.getElementById('flipbook-iframe');
+        const celebrate = document.getElementById('celebrate');
+        
+        let playerLeft = 50;
+        let playerBottom = 20;
+        let score = 0;
+        let chocolates = [];
+        let isMovingLeft = false;
+        let isMovingRight = false;
+        let gameInterval;
+        
+        // Player movement
+        function movePlayer() {
+            if (isMovingLeft && playerLeft > 0) {
+                playerLeft -= 7;
+            }
+            
+            if (isMovingRight && playerLeft < (gameContainer.offsetWidth - player.offsetWidth)) {
+                playerLeft += 7;
+            }
+            
+            player.style.left = playerLeft + 'px';
+        }
+        
+        // Handle keyboard input
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowLeft') {
+                isMovingLeft = true;
+            } else if (e.key === 'ArrowRight') {
+                isMovingRight = true;
+            }
+        });
+        
+        document.addEventListener('keyup', (e) => {
+            if (e.key === 'ArrowLeft') {
+                isMovingLeft = false;
+            } else if (e.key === 'ArrowRight') {
+                isMovingRight = false;
+            }
+        });
+        
+        // Touch controls for mobile
+        let touchStartX = 0;
+        let playerStartLeft = 0;
+        
+        // Add touch controls
+        gameContainer.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            touchStartX = e.touches[0].clientX;
+            playerStartLeft = playerLeft;
+        }, { passive: false });
+        
+        gameContainer.addEventListener('touchmove', (e) => {
+            e.preventDefault();
+            const touchX = e.touches[0].clientX;
+            const diff = touchX - touchStartX;
+            
+            let newLeft = playerStartLeft + diff;
+            
+            // Keep within bounds
+            if (newLeft < 0) newLeft = 0;
+            if (newLeft > gameContainer.offsetWidth - player.offsetWidth) {
+                newLeft = gameContainer.offsetWidth - player.offsetWidth;
+            }
+            
+            playerLeft = newLeft;
+            player.style.left = playerLeft + 'px';
+        }, { passive: false });
+        
+        // Create chocolates
+        function createChocolate() {
+            const chocolate = document.createElement('div');
+            chocolate.classList.add('chocolate');
+            
+            // Set random position
+            const chocolateLeft = Math.random() * (gameContainer.offsetWidth - 40);
+            const chocolateTop = -30;
+            
+            chocolate.style.left = chocolateLeft + 'px';
+            chocolate.style.top = chocolateTop + 'px';
+            
+            gameContainer.appendChild(chocolate);
+            
+            // Store chocolate in array
+            chocolates.push({
+                element: chocolate,
+                left: chocolateLeft,
+                top: chocolateTop,
+                speed: 2 + Math.random() * 3
+            });
+        }
+        
+        // Move chocolates down
+        function moveChocolates() {
+            for (let i = 0; i < chocolates.length; i++) {
+                const chocolate = chocolates[i];
+                
+                chocolate.top += chocolate.speed;
+                chocolate.element.style.top = chocolate.top + 'px';
+                
+                // Remove if out of bounds
+                if (chocolate.top > gameContainer.offsetHeight) {
+                    gameContainer.removeChild(chocolate.element);
+                    chocolates.splice(i, 1);
+                    i--;
+                }
+            }
+        }
+        
+        // Check for collisions between player and chocolates
+        function checkCollisions() {
+            const playerRect = player.getBoundingClientRect();
+            
+            for (let i = 0; i < chocolates.length; i++) {
+                const chocolate = chocolates[i];
+                const chocolateRect = chocolate.element.getBoundingClientRect();
+                
+                if (
+                    playerRect.left < chocolateRect.right &&
+                    playerRect.right > chocolateRect.left &&
+                    playerRect.top < chocolateRect.bottom &&
+                    playerRect.bottom > chocolateRect.top
+                ) {
+                    // Collision animation
+                    chocolate.element.style.transform = 'scale(1.5)';
+                    chocolate.element.style.opacity = '0';
+                    setTimeout(() => {
+                        // Remove chocolate
+                        if (chocolate.element.parentNode) {
+                            gameContainer.removeChild(chocolate.element);
+                        }
+                    }, 200);
+                    
+                    chocolates.splice(i, 1);
+                    i--;
+                    
+                    // Increase score with animation
+                    score++;
+                    scoreValue.textContent = score;
+                    scoreValue.style.transform = 'scale(1.5)';
+                    setTimeout(() => {
+                        scoreValue.style.transform = 'scale(1)';
+                    }, 200);
+                    
+                    // Check if won
+                    if (score >= 21) {
+                        unlockBtn.disabled = false;
+                        unlockBtn.classList.add('pulse');
+                        
+                        // Create confetti celebration
+                        createConfetti();
+                        
+                        // Stop game
+                        clearInterval(gameInterval);
+                    }
+                }
+            }
+        }
+        
+        // Create confetti celebration
+        function createConfetti() {
+            for (let i = 0; i < 100; i++) {
+                const confetti = document.createElement('div');
+                confetti.classList.add('confetti');
+                
+                // Random position, color and size
+                const left = Math.random() * 100;
+                const size = Math.random() * 8 + 3;
+                const duration = Math.random() * 3 + 2;
+                const delay = Math.random() * 2;
+                
+                // Mix of chocolate colors and gold
+                const colors = ['#54290D', '#8B4513', '#d4af37', '#A52A2A', '#D2691E'];
+                const color = colors[Math.floor(Math.random() * colors.length)];
+                
+                confetti.style.left = left + 'vw';
+                confetti.style.bottom = '-20px';
+                confetti.style.width = size + 'px';
+                confetti.style.height = size + 'px';
+                confetti.style.background = color;
+                confetti.style.borderRadius = Math.random() > 0.3 ? '50%' : '0';
+                confetti.style.animation = `float-confetti ${duration}s ease-in ${delay}s 1`;
+                
+                celebrate.appendChild(confetti);
+                
+                // Remove after animation
+                setTimeout(() => {
+                    confetti.remove();
+                }, (duration + delay) * 1000);
+            }
+        }
+        
+        // Open photobook
+        unlockBtn.addEventListener('click', () => {
+            photobook.style.display = 'block';
+            setTimeout(() => {
+                photobook.classList.add('visible');
+            }, 10);
+            
+            // Use the provided FlipHTML5 embed URL
+            flipbookIframe.src = "https://online.fliphtml5.com/tznqy/vfun/";
+        });
+        
+        // Close photobook
+        closeBtn.addEventListener('click', () => {
+            photobook.classList.remove('visible');
+            setTimeout(() => {
+                photobook.style.display = 'none';
+                flipbookIframe.src = "about:blank";
+            }, 500);
+        });
+        
+        // Start game
+        function startGame() {
+            // Reset variables
+            playerLeft = 50;
+            playerBottom = 20;
+            score = 0;
+            chocolates = [];
+            
+            // Remove existing chocolates
+            document.querySelectorAll('.chocolate').forEach(choc => choc.remove());
+            
+            // Update score display
+            scoreValue.textContent = score;
+            
+            // Reset player position
+            player.style.left = playerLeft + 'px';
+            
+            // Start game loop
+            gameInterval = setInterval(() => {
+                movePlayer();
+                moveChocolates();
+                checkCollisions();
+                
+                // Create new chocolate randomly
+                if (Math.random() < 0.05) {
+                    createChocolate();
+                }
+            }, 20);
+        }
+        
+        // Initialize game
+        window.onload = startGame;
+    </script>
+</body>
+</html>
