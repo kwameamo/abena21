@@ -58,7 +58,7 @@
         }
         
         h1 {
-            font-size: 4em;
+            font-size: clamp(2.5em, 5vw, 3.5em);
             font-weight: 700;
             margin-bottom: 10px;
             color: #fff;
@@ -67,6 +67,7 @@
             animation: fadeUp 1s ease forwards 0.3s;
             letter-spacing: 2px;
             position: relative;
+            text-transform: lowercase;
         }
         
         h1::before, h1::after {
@@ -105,7 +106,7 @@
         }
         
         .highlight::after {
-            content: "Anna";
+            content: "anna";
             position: absolute;
             left: 0;
             top: 0;
@@ -121,7 +122,7 @@
         }
         
         .subtitle {
-            font-size: 1.4em;
+            font-size: clamp(1em, 3vw, 1.4em);
             margin-bottom: 40px;
             font-weight: 300;
             opacity: 0;
@@ -139,10 +140,10 @@
         .game-container {
             position: relative;
             width: 100%;
-            height: 400px;
+            height: min(400px, 60vh);
             border: 2px solid #333;
             border-radius: 10px;
-            margin: 30px 0;
+            margin: 20px 0;
             background-color: #111;
             overflow: hidden;
             box-shadow: 0 0 30px rgba(212, 175, 55, 0.1);
@@ -233,6 +234,7 @@
             animation: fadeIn 1s ease forwards 1.5s;
             position: relative;
             overflow: hidden;
+            margin-bottom: 20px;
         }
         
         .photobook-btn::before {
@@ -282,15 +284,16 @@
         }
         
         .photobook-iframe {
-            width: 90%;
-            height: 90%;
-            margin: 2% auto;
-            display: block;
+            width: 100%;
+            height: 100%;
             border: none;
             box-shadow: 0 0 50px rgba(212, 175, 55, 0.2);
             transform: scale(0.9);
             transition: transform 0.5s ease;
             background-color: #000;
+            position: absolute;
+            top: 0;
+            left: 0;
         }
         
         .photobook-container.visible .photobook-iframe {
@@ -309,9 +312,14 @@
             z-index: 101;
         }
         
+        .close-btn:hover {
+            opacity: 1;
+            transform: rotate(90deg);
+        }
+        
         .birthday-message {
             max-width: 600px;
-            margin: 30px auto;
+            margin: 20px auto;
             padding: 25px;
             background-color: rgba(20, 20, 20, 0.6);
             border-left: 3px solid #d4af37;
@@ -321,22 +329,17 @@
             opacity: 0;
             transform: translateY(20px);
             animation: fadeUp 1s ease forwards 1s;
+            font-size: clamp(0.85em, 2vw, 0.95em);
         }
         
         .birthday-message p {
             margin-bottom: 15px;
             font-weight: 300;
-            font-size: 0.95em;
         }
         
         .birthday-message p:first-child {
             color: #d4af37;
             font-weight: 400;
-        }
-        
-        .close-btn:hover {
-            opacity: 1;
-            transform: rotate(90deg);
         }
         
         .game-instructions {
@@ -381,14 +384,14 @@
             position: absolute;
             top: 20px;
             right: 20px;
-            width: 70px;
-            height: 70px;
+            width: 60px;
+            height: 60px;
             background-color: #d4af37;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 28px;
+            font-size: 24px;
             font-weight: 700;
             color: #000;
             box-shadow: 0 0 20px rgba(212, 175, 55, 0.5);
@@ -437,6 +440,46 @@
             to {
                 opacity: 1;
                 transform: scale(1) rotate(0deg);
+            }
+        }
+        
+        /* Mobile optimizations */
+        @media (max-width: 768px) {
+            .age-badge {
+                width: 50px;
+                height: 50px;
+                font-size: 20px;
+                top: 10px;
+                right: 10px;
+            }
+            
+            .ornament {
+                font-size: 12px;
+            }
+            
+            .birthday-message {
+                padding: 15px;
+            }
+            
+            .game-container {
+                height: 300px;
+            }
+            
+            .player {
+                width: 40px;
+                height: 40px;
+            }
+            
+            .chocolate {
+                width: 25px;
+                height: 16px;
+            }
+            
+            .chocolate::before {
+                width: 16px;
+                height: 8px;
+                top: 4px;
+                left: 4px;
             }
         }
     </style>
@@ -512,16 +555,20 @@
         document.addEventListener('keydown', (e) => {
             if (e.key === 'ArrowLeft') {
                 isMovingLeft = true;
+                e.preventDefault();
             } else if (e.key === 'ArrowRight') {
                 isMovingRight = true;
+                e.preventDefault();
             }
         });
         
         document.addEventListener('keyup', (e) => {
             if (e.key === 'ArrowLeft') {
                 isMovingLeft = false;
+                e.preventDefault();
             } else if (e.key === 'ArrowRight') {
                 isMovingRight = false;
+                e.preventDefault();
             }
         });
         
@@ -586,7 +633,9 @@
                 
                 // Remove if out of bounds
                 if (chocolate.top > gameContainer.offsetHeight) {
-                    gameContainer.removeChild(chocolate.element);
+                    if (chocolate.element.parentNode) {
+                        gameContainer.removeChild(chocolate.element);
+                    }
                     chocolates.splice(i, 1);
                     i--;
                 }
@@ -631,7 +680,6 @@
                     // Check if won
                     if (score >= 21) {
                         unlockBtn.disabled = false;
-                        unlockBtn.classList.add('pulse');
                         
                         // Create confetti celebration
                         createConfetti();
@@ -726,99 +774,39 @@
             }, 20);
         }
         
-        // Add birthday ornaments to the age badge
+        // Initialize everything when window loads
         window.addEventListener('load', function() {
-            const ageBadge = document.querySelector('.age-badge');
-            const ornaments = ['🎂', '🎁', '🎈', '🎉', '✨', '🎊'];
-            
-            // Place ornaments around the badge
-            for (let i = 0; i < ornaments.length; i++) {
-                const ornament = document.createElement('div');
-                ornament.classList.add('ornament');
-                ornament.textContent = ornaments[i];
-                
-                // Calculate position around the circle
-                const angle = (i / ornaments.length) * Math.PI * 2;
-                const distance = 55; // Distance from the center
-                const x = Math.cos(angle) * distance;
-                const y = Math.sin(angle) * distance;
-                
-                ornament.style.left = `calc(50% + ${x}px)`;
-                ornament.style.top = `calc(50% + ${y}px)`;
-                
-                // Add random delay to floating animation
-                ornament.style.animationDelay = `${Math.random() * 2}s`;
-                
-                ageBadge.appendChild(ornament);
-            }
-            
-            // Create subtle background confetti
+            addBirthdayOrnaments();
             createBackgroundConfetti();
-        });
-        
-        // Subtle background confetti
-        // Start game
-        function startGame() {
-            // Reset variables
-            playerLeft = 50;
-            playerBottom = 20;
-            score = 0;
-            chocolates = [];
-            
-            // Remove existing chocolates
-            document.querySelectorAll('.chocolate').forEach(choc => choc.remove());
-            
-            // Update score display
-            scoreValue.textContent = score;
-            
-            // Reset player position
-            player.style.left = playerLeft + 'px';
-            
-            // Start game loop
-            gameInterval = setInterval(() => {
-                movePlayer();
-                moveChocolates();
-                checkCollisions();
-                
-                // Create new chocolate randomly
-                if (Math.random() < 0.05) {
-                    createChocolate();
-                }
-            }, 20);
-        }
-        
-        // Add birthday ornaments to the age badge
-        window.addEventListener('load', function() {
-            const ageBadge = document.querySelector('.age-badge');
-            const ornaments = ['🎂', '🎁', '🎈', '🎉', '✨', '🎊'];
-            
-            // Place ornaments around the badge
-            for (let i = 0; i < ornaments.length; i++) {
-                const ornament = document.createElement('div');
-                ornament.classList.add('ornament');
-                ornament.textContent = ornaments[i];
-                
-                // Calculate position around the circle
-                const angle = (i / ornaments.length) * Math.PI * 2;
-                const distance = 55; // Distance from the center
-                const x = Math.cos(angle) * distance;
-                const y = Math.sin(angle) * distance;
-                
-                ornament.style.left = `calc(50% + ${x}px)`;
-                ornament.style.top = `calc(50% + ${y}px)`;
-                
-                // Add random delay to floating animation
-                ornament.style.animationDelay = `${Math.random() * 2}s`;
-                
-                ageBadge.appendChild(ornament);
-            }
-            
-            // Create subtle background confetti
-            createBackgroundConfetti();
-            
-            // Start game
             startGame();
         });
+        
+        // Add birthday ornaments to the age badge
+        function addBirthdayOrnaments() {
+            const ageBadge = document.querySelector('.age-badge');
+            const ornaments = ['🎂', '🎁', '🎈', '🎉', '✨', '🎊'];
+            
+            // Place ornaments around the badge
+            for (let i = 0; i < ornaments.length; i++) {
+                const ornament = document.createElement('div');
+                ornament.classList.add('ornament');
+                ornament.textContent = ornaments[i];
+                
+                // Calculate position around the circle
+                const angle = (i / ornaments.length) * Math.PI * 2;
+                const distance = 45; // Distance from the center
+                const x = Math.cos(angle) * distance;
+                const y = Math.sin(angle) * distance;
+                
+                ornament.style.left = `calc(50% + ${x}px)`;
+                ornament.style.top = `calc(50% + ${y}px)`;
+                
+                // Add random delay to floating animation
+                ornament.style.animationDelay = `${Math.random() * 2}s`;
+                
+                ageBadge.appendChild(ornament);
+            }
+        }
         
         // Subtle background confetti
         function createBackgroundConfetti() {
